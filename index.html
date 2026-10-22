@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORBITAL | Space Mission Generator</title>
+<style>
+:root {
+  --bg:#080d19; --panel:#111a2c; --line:#24334b;
+  --cyan:#67e8f9; --text:#f0f6ff; --muted:#9aabc3;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; color:var(--text); background:
+  radial-gradient(ellipse at 80% 0%,#173052 0%,transparent 40%),
+  var(--bg);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  min-height:100vh;
+}
+header {
+  padding:22px 7%; border-bottom:1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:center;
+  gap:12px;
+}
+.logo { font-size:21px; font-weight:800; letter-spacing:3px; }
+.logo span { color:var(--cyan); }
+.status { color:var(--cyan); font-size:12px; letter-spacing:1px; }
+main { max-width:1000px; margin:auto; padding:55px 20px; }
+.eyebrow { color:var(--cyan); font-size:12px; letter-spacing:3px; }
+h1 { font-size:clamp(36px,7vw,65px); margin:14px 0; line-height:1.05; }
+h1 span { color:var(--cyan); }
+.intro { color:var(--muted); line-height:1.7; max-width:600px; }
+.layout {
+  display:grid; grid-template-columns:280px 1fr;
+  gap:20px; margin-top:35px;
+}
+.panel {
+  background:rgba(17,26,44,.92); border:1px solid var(--line);
+  border-radius:16px; padding:23px; min-width:0;
+}
+h2 { font-size:16px; margin:0 0 22px; }
+label { display:block; font-size:12px; color:var(--muted); margin:17px 0 8px; }
+select,button {
+  font:inherit; border-radius:9px; padding:12px;
+}
+select {
+  width:100%; background:#0b1425; color:var(--text);
+  border:1px solid var(--line);
+}
+button { cursor:pointer; font-weight:700; }
+.primary {
+  width:100%; margin-top:23px; background:var(--cyan);
+  color:#07111d; border:0;
+}
+.primary:hover { filter:brightness(1.08); }
+.secondary {
+  background:#16243a; color:var(--text);
+  border:1px solid var(--line);
+}
+.actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:22px; }
+.actions button { flex:1; min-width:110px; }
+.tag {
+  display:inline-block; padding:6px 9px; border-radius:6px;
+  background:#163344; color:var(--cyan); font-size:11px;
+}
+#missionTitle { font-size:clamp(24px,4vw,34px); margin:15px 0; }
+.description { color:var(--muted); line-height:1.6; }
+.stats {
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:10px; margin:22px 0;
+}
+.stat { background:#0b1425; padding:14px; border-radius:9px; }
+.stat small { display:block; color:var(--muted); margin-bottom:8px; }
+.stat strong { font-size:15px; }
+ul { padding-left:20px; color:#dce7f6; line-height:1.9; }
+hr { border:0; border-top:1px solid var(--line); margin:22px 0; }
+#feedback { color:var(--cyan); font-size:12px; min-height:18px; }
+footer { text-align:center; color:var(--muted); font-size:12px; padding:20px; }
+@media(max-width:700px) {
+  header { padding:18px 5%; }
+  main { padding:38px 16px; }
+  .layout { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">◉ ORBITAL<span>.</span></div>
+  <div class="status">● MISSION SYSTEM ONLINE</div>
+</header>
+
+<main>
+  <div class="eyebrow">YOUR UNIVERSE. YOUR MISSION.</div>
+  <h1>Explore the <span>unknown.</span></h1>
+  <p class="intro">
+    Design your next space mission. Choose your destination,
+    set your challenge, and discover what awaits beyond Earth.
+  </p>
+
+  <div class="layout">
+    <section class="panel">
+      <h2>Mission parameters</h2>
+      <label for="destination">DESTINATION</label>
+      <select id="destination">
+        <option>Mars</option>
+        <option>The Moon</option>
+        <option>Europa</option>
+        <option>Titan</option>
+        <option>Venus</option>
+        <option>Asteroid Belt</option>
+        <option>Saturn</option>
+      </select>
+
+      <label for="type">MISSION TYPE</label>
+      <select id="type">
+        <option>Exploration</option>
+        <option>Scientific Research</option>
+        <option>Search for Life</option>
+        <option>Robotic Repair</option>
+        <option>Rescue Mission</option>
+      </select>
+
+      <label for="difficulty">DIFFICULTY</label>
+      <select id="difficulty">
+        <option>Easy</option>
+        <option selected>Medium</option>
+        <option>Hard</option>
+      </select>
+
+      <button class="primary" onclick="generateMission()">
+        ✦ Generate Mission
+      </button>
+    </section>
+
+    <section class="panel" aria-live="polite">
+      <span class="tag" id="missionTag">MISSION BRIEFING</span>
+      <h2 id="missionTitle">Project Horizon</h2>
+      <p class="description" id="description">
+        Your next mission begins here. Generate a briefing to get started.
+      </p>
+
+      <div class="stats">
+        <div class="stat"><small>EST. DURATION</small><strong id="duration">—</strong></div>
+        <div class="stat"><small>DIFFICULTY</small><strong id="level">—</strong></div>
+        <div class="stat"><small>CREW SIZE</small><strong id="crew">—</strong></div>
+        <div class="stat"><small>RESOURCE LEVEL</small><strong id="resources">—</strong></div>
+      </div>
+
+      <hr>
+      <h2>Mission objectives</h2>
+      <ul id="objectives"><li>Awaiting mission generation...</li></ul>
+
+      <h2>Potential challenge</h2>
+      <p class="description" id="challenge">Awaiting mission generation...</p>
+
+      <h2>Success condition</h2>
+      <p class="description" id="success">Complete all primary objectives.</p>
+
+      <div class="actions">
+        <button class="secondary" onclick="copyMission()">Copy briefing</button>
+        <button class="secondary" onclick="downloadMission()">Download .txt</button>
+        <button class="secondary" onclick="saveMission()">☆ Save mission</button>
+      </div>
+      <p id="feedback" role="status"></p>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:20px">
+    <span class="tag">CAREER MODE</span>
+    <h2>Space Explorer Academy</h2>
+    <p class="description">
+      Complete missions to earn XP and advance your space career.
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <small>EXPERIENCE</small>
+        <strong id="careerXP">0 XP</strong>
+      </div>
+      <div class="stat">
+        <small>RANK</small>
+        <strong id="careerRank">Cadet</strong>
+      </div>
+    </div>
+    <button class="primary" onclick="completeMission()">
+      ✓ Complete Mission (+100 XP)
+    </button>
+    <p id="careerFeedback" class="description" aria-live="polite">
+      Your career starts with your first mission.
+    </p>
+  </section>
+
+  <section class="panel" style="margin-top:20px">
+    <h2>Saved missions</h2>
+    <div id="saved">Your saved missions will appear here.</div>
+    <button class="secondary" style="margin-top:12px"
+      onclick="clearSaved()">Clear saved missions</button>
+  </section>
+</main>
+<footer>ORBITAL © 2026 · Fictional mission generator for space enthusiasts.</footer>
+
+<script>
+let currentMission = null;
+
+const challenges = [
+  "A solar storm disrupts communications with mission control.",
+  "An unexpected equipment failure threatens the schedule.",
+  "Your sensors detect an unusual signal that needs investigation.",
+  "A dust storm reduces visibility and delays the mission.",
+  "A power shortage forces the team to prioritize its systems.",
+  "A navigation error requires a new route to the destination."
+];
+
+const goals = {
+  "Exploration": [
+    "Map an unexplored region.",
+    "Collect samples and record environmental conditions.",
+    "Transmit a detailed exploration report."
+  ],
+  "Scientific Research": [
+    "Deploy scientific instruments.",
+    "Collect and analyze environmental data.",
+    "Send results back to mission control."
+  ],
+  "Search for Life": [
+    "Identify promising locations for investigation.",
+    "Analyze samples for possible signs of life.",
+    "Document findings without contaminating the site."
+  ],
+  "Robotic Repair": [
+    "Locate the damaged equipment.",
+    "Diagnose the fault and complete repairs.",
+    "Test the system before leaving."
+  ],
+  "Rescue Mission": [
+    "Locate the stranded crew or probe.",
+    "Assess available supplies and risks.",
+    "Complete the rescue and report mission status."
+  ]
+};
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+let missionCompleted = false;
+
+function getCareerXP() {
+  return Number(localStorage.getItem("orbitalXP") || 0);
+}
+
+function renderCareer() {
+  const xp = getCareerXP();
+  const rank = xp >= 1000 ? "Commander"
+    : xp >= 500 ? "Pilot"
+    : xp >= 200 ? "Specialist"
+    : "Cadet";
+
+  document.getElementById("careerXP").textContent = xp + " XP";
+  document.getElementById("careerRank").textContent = rank;
+}
+
+function completeMission() {
+  if (!currentMission) return;
+
+  if (missionCompleted) {
+    document.getElementById("careerFeedback").textContent =
+      "Mission already completed! Generate a new mission.";
+    return;
+  }
+
+  missionCompleted = true;
+  localStorage.setItem("orbitalXP", getCareerXP() + 100);
+  renderCareer();
+
+  document.getElementById("careerFeedback").textContent =
+    "Mission completed! +100 XP earned. Great work, explorer!";
+}
+
+function generateMission() {
+  const destination = document.getElementById("destination").value;
+  const type = document.getElementById("type").value;
+  const difficulty = document.getElementById("difficulty").value;
+  const id = Math.floor(1000 + Math.random() * 9000);
+  const durations = {Easy:"7 days", Medium:"30 days", Hard:"180 days"};
+  const crews = {Easy:"2 specialists", Medium:"4 specialists", Hard:"6 specialists"};
+  const resources = {Easy:"Standard", Medium:"Limited", Hard:"Critical"};
+  const challenge = pick(challenges);
+  const objectives = [...goals[type]].sort(() => Math.random() - 0.5);
+
+  currentMission = {
+    title: `${pick(["Project Horizon","Operation Starfall","Project Odyssey",
+      "Mission Pathfinder","Project Deep Space"])}-${id}`,
+    destination, type, difficulty,
+    duration:durations[difficulty],
+    crew:crews[difficulty],
+    resources:resources[difficulty],
+    objectives, challenge,
+    success:`Complete all ${objectives.length} objectives and return a verified mission report.`
+  };
+
+  document.getElementById("missionTag").textContent =
+    `${type.toUpperCase()} · ${destination.toUpperCase()}`;
+  document.getElementById("missionTitle").textContent = currentMission.title;
+  document.getElementById("description").textContent =
+    `Mission control has authorized a ${difficulty.toLowerCase()} ${type.toLowerCase()} mission to ${destination}. Prepare your team and review the briefing before launch.`;
+  document.getElementById("duration").textContent = currentMission.duration;
+  document.getElementById("level").textContent = difficulty;
+  document.getElementById("crew").textContent = currentMission.crew;
+  document.getElementById("resources").textContent = currentMission.resources;
+  document.getElementById("objectives").replaceChildren(
+    ...objectives.map(text => {
+      const li = document.createElement("li");
+      li.textContent = text;
+      return li;
+    })
+  );
+  document.getElementById("challenge").textContent = challenge;
+  document.getElementById("success").textContent = currentMission.success;
+  document.getElementById("feedback").textContent = "New mission generated.";
+}
+
+function missionText(m) {
+  return `${m.title}\nDestination: ${m.destination}\nMission: ${m.type}\nDifficulty: ${m.difficulty}\nDuration: ${m.duration}\nCrew: ${m.crew}\nResources: ${m.resources}\n\nObjectives:\n- ${m.objectives.join("\n- ")}\n\nChallenge: ${m.challenge}\nSuccess: ${m.success}`;
+}
+
+async function copyMission() {
+  if (!currentMission) return;
+  try {
+    await navigator.clipboard.writeText(missionText(currentMission));
+    document.getElementById("feedback").textContent = "Briefing copied!";
+  } catch {
+    document.getElementById("feedback").textContent =
+      "Copy unavailable. Select and copy the briefing manually.";
+  }
+}
+
+function downloadMission() {
+  if (!currentMission) return;
+  const blob = new Blob([missionText(currentMission)], {type:"text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = currentMission.title.replace(/[^a-z0-9-]/gi,"_") + ".txt";
+  a.click();
+  URL.revokeObjectURL(url);
+  document.getElementById("feedback").textContent = "Download started.";
+}
+
+function getSaved() {
+  try { return JSON.parse(localStorage.getItem("orbitalMissions") || "[]"); }
+  catch { return []; }
+}
+
+function saveMission() {
+  if (!currentMission) return;
+  const saved = getSaved();
+  if (saved.some(m => m.title === currentMission.title)) {
+    document.getElementById("feedback").textContent = "Already saved.";
+    return;
+  }
+  saved.unshift(currentMission);
+  localStorage.setItem("orbitalMissions", JSON.stringify(saved.slice(0,20)));
+  renderSaved();
+  document.getElementById("feedback").textContent = "Mission saved on this device.";
+}
+
+function renderSaved() {
+  const container = document.getElementById("saved");
+  const saved = getSaved();
+  container.replaceChildren();
+  if (!saved.length) {
+    container.textContent = "Your saved missions will appear here.";
+    return;
+  }
+  saved.forEach(m => {
+    const row = document.createElement("div");
+    row.style.cssText = "padding:12px 0;border-bottom:1px solid #24334b";
+    const title = document.createElement("strong");
+    title.textContent = m.title;
+    const detail = document.createElement("p");
+    detail.className = "description";
+    detail.textContent = `${m.destination} · ${m.type} · ${m.difficulty}`;
+    row.append(title, detail);
+    container.append(row);
+  });
+}
+
+function clearSaved() {
+  if (!confirm("Delete all missions saved on this device?")) return;
+  localStorage.removeItem("orbitalMissions");
+  renderSaved();
+}
+
+generateMission();
+renderSaved();
+renderCareer();
+</script>
+</body>
+</html>
