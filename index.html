@@ -476,8 +476,8 @@ function renderHistory() {
   reload.addEventListener("click", () => {
    $("sector").value = entry.sectorValue;
    $("reviews").value = entry.reviews;
-   analyze();
-   window.scrollTo({top: 0, behavior: "smooth"});
+analyze(false);
+window.scrollTo({top: 0, behavior: "smooth"});
   });
 
   const remove = document.createElement("button");
@@ -501,7 +501,7 @@ function renderHistory() {
  });
 }
 
-function analyze() {
+function analyze(saveToHistory = true) {
  const reviews=$("reviews").value
   .split(/\n+/)
   .map(s=>s.trim())
@@ -657,16 +657,18 @@ function analyze() {
   strengths,problems,results,priorities
  );
 
- saveHistoryEntry({
-  id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-  date: new Date().toLocaleString("fr-FR"),
-  sectorValue: sector,
-  sector: $("sector").selectedOptions[0].textContent,
-  reviews: $("reviews").value,
-  total: reviews.length,
-  positive,
-  negative
- });
+if (saveToHistory) {
+  saveHistoryEntry({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    date: new Date().toLocaleString("fr-FR"),
+    sectorValue: sector,
+    sector: $("sector").selectedOptions[0].textContent,
+    reviews: $("reviews").value,
+    total: reviews.length,
+    positive,
+    negative
+  });
+}
 }
 
 function buildReport(total,pos,neg,neutral,strengths,problems,results,priorities) {
